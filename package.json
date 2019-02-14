@@ -4,7 +4,8 @@
   "description": "Simple chess-timer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"no tests\""
+    "test": "echo \"no tests\"",
+    "start" : "micro"
   },
   "repository": {
     "type": "git",
