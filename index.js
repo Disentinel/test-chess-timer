@@ -138,7 +138,7 @@ module.exports = async req => {
     if(request.nlu.tokens.some(token => (token === 'стоп'))) {
       const interval = Date.now() - user.turnStarted
 
-      user.partyTimes[now] += +interval
+      user.partyTimes[user.now] += +interval
       user.totalTime += +interval
 
       const TStoMIN = ts => (ts / 1000 / 60)
