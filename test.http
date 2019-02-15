@@ -1,0 +1,12 @@
+POST https://alice.ra-staging.com/parrot/
+Content-Type: application/json
+
+{
+  "request" : {
+    "blabla" : true
+  },
+  "version" : 1,
+  "session" : {
+    "user_id" : "asd12"
+  }
+}
