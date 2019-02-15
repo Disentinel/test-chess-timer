@@ -31,12 +31,10 @@ module.exports = async req => {
   } catch (e) {
     let emptyUser = {
       _id: session.session_id,
-      isNowPlaying: false,
       partySize: 2,
       now: 0,
       partyTimes: [0, 0],
       totalTime: 0,
-      paused: false,
       flowPhase: 'start'
     }
 
@@ -72,6 +70,7 @@ module.exports = async req => {
       response.text = 'Отлично. Сколько человек играет?'
     } else {
       user.flowPhase = 'start'
+      await db.remove(user)
       response.end_session = true
       response.text = 'Ну нет, так нет.'
     }
