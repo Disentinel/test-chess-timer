@@ -16,7 +16,7 @@ const COLOR = [
 
 module.exports = async req => {
   var response = {
-    text: 'Что-то пошло не так. Попробуйте снова через пару минут. Если проблема не исчезла, значит я слегка приболела. Дайте пожалуйста знать моему лечащему врачу по адресу rescuerdiver@yandex.ru',
+    text: 'К сожалению это тестовый навык, поэтому я умею совсем мало. Если вы не можете воспользоваться шахматными часами, значит я слегка приболела. Дайте пожалуйста знать моему лечащему врачу по адресу rescuerdiver@yandex.ru',
     end_session: false
   }
 
@@ -113,7 +113,7 @@ module.exports = async req => {
 
       const TStoMIN = ts => (ts / 1000)
 
-      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time).toFixed(1)} секунд \n`)).join('')
+      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time).toFixed(1)} сек. \n`)).join('')
 
       response.text += `Суммарное время: ${TStoMIN(user.totalTime).toFixed(1)} сек.`
 
