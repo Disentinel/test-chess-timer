@@ -118,7 +118,13 @@ module.exports = async req => {
 
       response.text += `Суммарное время: ${TStoMIN(user.totalTime).toFixed(1)} секунд`
 
-      db.remove(user)
+      await db.remove(user)
+
+      return {
+        version,
+        session,
+        response
+      }
     }
 
     if(request.nlu.tokens.some(token => (token === 'ход'))) {
