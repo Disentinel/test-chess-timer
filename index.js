@@ -22,13 +22,15 @@ module.exports = async req => {
 
   const { request, session, version } = await json(req)
 
+  if(session.new) response.text = 'Здравствуйте!'
+
   var user = {}
 
   try {
-    user = await db.get(session.user_id)
+    user = await db.get(session.session_id)
   } catch (e) {
     let emptyUser = {
-      _id: session.user_id,
+      _id: session.session_id,
       isNowPlaying: false,
       partySize: 2,
       now: 0,
@@ -48,7 +50,7 @@ module.exports = async req => {
   console.log(`User`, user)
 
   if (user.flowPhase === 'start') {
-    response.text = 'Начнем новую партию в шахматы? (да\нет)'
+    response.text = 'Начнем новую партию в шахматы? (да/нет)'
     response.tts = 'Начнем новую партию в шахматы?'
     user.flowPhase = 'startResponseWait'
     await db.put(user)
@@ -104,6 +106,21 @@ module.exports = async req => {
   }
 
   if (user.flowPhase === 'game') {
+    if(request.nlu.tokens.some(token => (token === 'стоп'))) {
+      const interval = Date.now() - user.turnStarted
+
+      user.partyTimes[user.now] += +interval
+      user.totalTime += +interval
+
+      const TStoMIN = ts => (ts / 1000)
+
+      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time).toFixed(1)} секунд \n`))
+
+      response.text += `Суммарное время: ${TStoMIN(user.totalTime).toFixed(1)} секунд`
+
+      db.remove(user)
+    }
+
     if(request.nlu.tokens.some(token => (token === 'ход'))) {
       if(!user.turnStarted) {
         user.turnStarted = Date.now()
@@ -133,27 +150,15 @@ module.exports = async req => {
         session,
         response
       }
+    } else {
+      response.text = 'Если вы хотите передать ход следующему игроку, просто скажите "Ход".'
+      return {
+        version,
+        session,
+        response
+      }
     }
-
-    if(request.nlu.tokens.some(token => (token === 'стоп'))) {
-      const interval = Date.now() - user.turnStarted
-
-      user.partyTimes[user.now] += +interval
-      user.totalTime += +interval
-
-      const TStoMIN = ts => (ts / 1000 / 60)
-
-      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time)} минут \n`))
-
-      response.text += `Суммарное время: ${TStoMIN(user.totalTime)} минут`
-
-      db.remove(user)
-    }
-
-
   }
-
-
 
   return {
     version,
