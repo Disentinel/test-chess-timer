@@ -66,10 +66,10 @@ module.exports = async req => {
     let positiveResponses = ['да', 'ок', 'давай']
     let negativeResponses = ['нет']
 
-    if (request.nlu.tokens.some(value => positiveResponses.filter(token => (value === token)))) {
+    if (request.nlu.tokens.some(value => (positiveResponses.filter(token => (value === token)).length > 0))) {
       user.flowPhase = 'partySize'
       await db.put(user)
-      response.text = 'Сколько человек играет?'
+      response.text = 'Отлично. Сколько человек играет?'
     } else {
       user.flowPhase = 'start'
       response.end_session = true
@@ -114,9 +114,9 @@ module.exports = async req => {
 
       const TStoMIN = ts => (ts / 1000)
 
-      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time).toFixed(1)} секунд \n`))
+      response.text = user.partyTimes.map((time, i) => (`${COLOR[i]} - ${TStoMIN(time).toFixed(1)} секунд \n`)).join('')
 
-      response.text += `Суммарное время: ${TStoMIN(user.totalTime).toFixed(1)} секунд`
+      response.text += `Суммарное время: ${TStoMIN(user.totalTime).toFixed(1)} сек.`
 
       await db.remove(user)
 
